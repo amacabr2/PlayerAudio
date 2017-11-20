@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:padding="5dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/songRow_image"
+        android:src="@drawable/music_placeholder"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:id="@+id/songRow_title"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:paddingRight="50dp"
+        android:paddingEnd="50dp"
+        android:layout_toRightOf="@id/songRow_image"
+        android:layout_toEndOf="@id/songRow_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Titre de la chanson"/>
+
+    <TextView
+        android:id="@+id/songRow_artiste"
+        android:textStyle="bold"
+        android:paddingRight="50dp"
+        android:paddingEnd="50dp"
+        android:layout_toRightOf="@id/songRow_image"
+        android:layout_toEndOf="@id/songRow_image"
+        android:layout_below="@id/songRow_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Artiste"/>
+
+    <TextView
+        android:id="@+id/songRow_duration"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3:05"/>
+
+    <ImageView
+        android:id="@+id/songRow_playActive"
+        android:src="@drawable/ic_play_circle_outline_white"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/songRow_duration"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
+</RelativeLayout>

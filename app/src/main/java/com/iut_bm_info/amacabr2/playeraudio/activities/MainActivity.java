@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements SongAdapter.Recyc
 
     private List<Song> songs;
 
+    private int currentIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +51,10 @@ public class MainActivity extends AppCompatActivity implements SongAdapter.Recyc
         request.getSongs(new SoundCloudApiRequest.SoundCloudInterface() {
             @Override
             public void onSuccess(List<Song> newSongs) {
+                currentIndex = 0;
                 songs.addAll(newSongs);
                 adapter.notifyDataSetChanged();
+                adapter.setSelectedPosition(0);
             }
 
             @Override
@@ -63,5 +67,13 @@ public class MainActivity extends AppCompatActivity implements SongAdapter.Recyc
     @Override
     public void onClickListener(Song song, int position) {
         Toast.makeText(this, song.getTitle(), Toast.LENGTH_SHORT).show();
+        changeSelectedSong(position);
+    }
+
+    private void changeSelectedSong(int index) {
+        adapter.notifyItemChanged(adapter.getSelectedPosition());
+        currentIndex = index;
+        adapter.setSelectedPosition(currentIndex);
+        adapter.notifyItemChanged(currentIndex);
     }
 }

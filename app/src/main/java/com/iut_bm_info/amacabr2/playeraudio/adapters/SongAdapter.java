@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.iut_bm_info.amacabr2.playeraudio.R;
 import com.iut_bm_info.amacabr2.playeraudio.models.Song;
+import com.iut_bm_info.amacabr2.playeraudio.utils.ConvertDuration;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -43,9 +44,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         Song song = songs.get(position);
 
         if (song != null) {
+            String duration = ConvertDuration.milliToMinuteAnsSeconde(song.getDuration());
+
             holder.tvTitle.setText(song.getTitle());
             holder.tvArtist.setText(song.getArtist());
-            holder.tvDuration.setText(String.valueOf(song.getDuration()));
+            holder.tvDuration.setText(duration);
             Picasso.with(context).load(song.getArtworkUrl()).placeholder(R.drawable.music_placeholder).into(holder.ivArtWork);
 
             holder.bind(song, listener);

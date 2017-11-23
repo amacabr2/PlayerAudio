@@ -1,4 +1,4 @@
-package com.iut_bm_info.amacabr2.playeraudio;
+package com.iut_bm_info.amacabr2.playeraudio.api_connect;
 
 import android.content.Context;
 

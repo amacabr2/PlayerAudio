@@ -25,8 +25,7 @@
                 android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="Azerty"/>
+                android:textSize="15sp" />
 
             <ProgressBar
                 android:id="@+id/toolbar_loader"
@@ -71,8 +70,7 @@
             <TextView
                 android:id="@+id/toolbar_time"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3:35"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

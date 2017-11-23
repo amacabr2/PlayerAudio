@@ -1,10 +1,12 @@
 package com.iut_bm_info.amacabr2.playeraudio.models;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by amacabr2 on 23/11/17.
  */
 
-public class Song {
+public class Song implements Comparable<Song>{
 
     private long id;
 
@@ -56,5 +58,10 @@ public class Song {
 
     public int getPlaybackCount() {
         return playbackCount;
+    }
+
+    @Override
+    public int compareTo(@NonNull Song another) {
+        return another.playbackCount - this.playbackCount;
     }
 }

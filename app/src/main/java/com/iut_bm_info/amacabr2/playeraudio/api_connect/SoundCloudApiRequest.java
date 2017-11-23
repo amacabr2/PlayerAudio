@@ -1,8 +1,5 @@
 package com.iut_bm_info.amacabr2.playeraudio.api_connect;
 
-import android.util.Log;
-
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -54,7 +51,7 @@ public class SoundCloudApiRequest implements Response.Listener<JSONArray>, Respo
                     String artworkUrl = songObject.getString("atwork_url");
                     String streamUrl = songObject.getString("stream_url");
                     long duration = songObject.getLong("duration");
-                    int playbackCount = songObject.getInt("playback_count");
+                    int playbackCount = songObject.has("playback_count") ? songObject.getInt("playback_count") : 0;
                     JSONObject userObject = songObject.getJSONObject("user");
                     String artist = userObject.getString("username");
 

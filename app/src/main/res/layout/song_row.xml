@@ -26,8 +26,7 @@
         android:layout_toRightOf="@id/songRow_image"
         android:layout_toEndOf="@id/songRow_image"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Titre de la chanson"/>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/songRow_artiste"
@@ -38,8 +37,7 @@
         android:layout_toEndOf="@id/songRow_image"
         android:layout_below="@id/songRow_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Artiste"/>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/songRow_duration"

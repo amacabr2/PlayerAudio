@@ -14,6 +14,7 @@ import com.iut_bm_info.amacabr2.playeraudio.models.Song;
 import com.iut_bm_info.amacabr2.playeraudio.utils.ConvertDuration;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 
 import static android.view.View.INVISIBLE;
@@ -109,6 +110,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     public interface RecyclerItemClickListener {
 
-        void  onClickListener(Song song, int position);
+        void  onClickListener(Song song, int position) throws IOException;
     }
 }

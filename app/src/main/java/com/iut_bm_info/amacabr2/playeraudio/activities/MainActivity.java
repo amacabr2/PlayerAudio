@@ -34,15 +34,20 @@ import static android.view.View.VISIBLE;
 public class MainActivity extends AppCompatActivity implements
         SongAdapter.RecyclerItemClickListener,
         MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnCompletionListener,
+        View.OnClickListener {
+
+    public static final int CLICK_IV_PLAY = 0;
+
+    public static final int CLICK_IV_PREVIOUS = 1;
+
+    public static final int CLICK_IV_NEXT = 2;
 
     private RecyclerView recycler;
 
     private SongAdapter adapter;
 
     private List<Song> songs;
-
-    private int currentIndex;
 
     private TextView tvTitle, tvDuration;
 
@@ -56,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private long currentSongLenth;
 
+    private int currentIndex;
+
+    private boolean firstLaunch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements
         getSongs();
 
         songs = new ArrayList<>();
+        firstLaunch = true;
 
         recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         adapter = new SongAdapter(getApplicationContext(), songs, this);
@@ -99,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClickListener(Song song, int position) throws IOException {
+        firstLaunch = false;
         changeSelectedSong(position);
         prepareSong(song);
     }
@@ -111,17 +122,32 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         if (currentIndex + 1 < songs.size()) {
-            changeMusic(currentIndex + 1);
+            playNewSong(currentIndex + 1);
         } else {
-            changeMusic(0);
+            playNewSong(0);
         }
     }
 
-    private void changeMusic(int i) {
-        Song next = songs.get(i);
+    @Override
+    public void onClick(View view) {
+       switch ((int)view.getTag()) {
+           case CLICK_IV_PLAY:
+               pushPlay();
+               break;
+           case CLICK_IV_PREVIOUS:
+               pushPrevious();
+               break;
+           case CLICK_IV_NEXT:
+               pushNext();
+               break;
+       }
+    }
+
+    private void playNewSong(int i) {
+        Song nextOrPrevious = songs.get(i);
         changeSelectedSong(i);
         try {
-            prepareSong(next);
+            prepareSong(nextOrPrevious);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,6 +163,12 @@ public class MainActivity extends AppCompatActivity implements
         ivPrevious = findViewById(R.id.toolbar_previous);
         pbLoaderToolbar = findViewById(R.id.toolbar_loader);
         sbMusic = findViewById(R.id.toolbar_seekbar);
+
+        ivPlay.setTag(CLICK_IV_PLAY);
+        ivPrevious.setTag(CLICK_IV_PREVIOUS);
+
+        ivPlay.setOnClickListener(this);
+        ivPrevious.setOnClickListener(this);
     }
 
     private void togglePlay(final MediaPlayer mediaPlayer) {
@@ -201,5 +233,47 @@ public class MainActivity extends AppCompatActivity implements
 
             }
         });
+    }
+
+    private void pushPlay() {
+        assert mediaPlayer != null;
+
+        if (mediaPlayer.isPlaying()) {
+            ivPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selector_play));
+            mediaPlayer.pause();
+        } else {
+            if (firstLaunch) {
+                playNewSong(0);
+            } else {
+                mediaPlayer.start();
+                firstLaunch = false;
+            }
+        }
+
+        ivPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selector_pause));
+    }
+
+    private void pushPrevious() {
+        firstLaunch = false;
+        assert mediaPlayer != null;
+        int index;
+
+        if ((index = currentIndex - 1) >= 0) {
+            playNewSong(index);
+        } else {
+            playNewSong(songs.size() - 1);
+        }
+    }
+
+    private void pushNext() {
+        firstLaunch = false;
+        assert mediaPlayer != null;
+        int index;
+
+        if ((index = currentIndex + 1) < songs.size()) {
+            playNewSong(index);
+        } else {
+            playNewSong(0);
+        }
     }
 }

@@ -102,7 +102,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onClickListener(song, getLayoutPosition());
+                    try {
+                        listener.onClickListener(song, getLayoutPosition());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }

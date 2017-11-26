@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +34,19 @@ public class SoundCloudApiRequest implements Response.Listener<JSONArray>, Respo
         this.requestQueue = requestQueue;
     }
 
-    public void getSongs(SoundCloudInterface callback) {
+    public void getSongs(String query, SoundCloudInterface callback) {
+        String url = URL;
+        if (query.length() > 0) {
+            try {
+                query = URLEncoder.encode(query, "UTF-8");
+                url = URL + "&q=" + query;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
         this.callback = callback;
-        JsonArrayRequest request = new JsonArrayRequest(GET, URL, this, this);
+        JsonArrayRequest request = new JsonArrayRequest(GET, url, this, this);
         requestQueue.add(request);
     }
 

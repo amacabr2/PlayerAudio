@@ -26,4 +26,16 @@
 
     <include layout="@layout/toolbar" android:id="@+id/mainActivity_toolbar" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/mainActivity_btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mainActivity_toolbar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_search"
+        app:fabSize="normal"
+        app:layout_anchor="@id/mainActivity_recycler"/>
+
 </RelativeLayout>

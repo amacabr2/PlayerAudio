@@ -1,14 +1,18 @@
 package com.iut_bm_info.amacabr2.playeraudio.activities;
 
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -43,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements
 
     public static final int CLICK_IV_NEXT = 2;
 
+    public static final int CLICK_BTN_SEARCH = 3;
+
     private RecyclerView recycler;
 
     private SongAdapter adapter;
@@ -54,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView ivPlay, ivNext, ivPrevious;
 
     private ProgressBar pbLoaderMain, pbLoaderToolbar;
+
+    private FloatingActionButton fabSearch;
 
     private SeekBar sbMusic;
 
@@ -70,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         initializeViews();
         setContentView(R.layout.activity_main);
-        getSongs();
+        getSongs("");
 
         songs = new ArrayList<>();
         firstLaunch = true;
@@ -87,14 +95,25 @@ public class MainActivity extends AppCompatActivity implements
         handleSeekbar();
     }
 
-    public void getSongs() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+    }
+
+    public void getSongs(String query) {
         RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
         SoundCloudApiRequest request = new SoundCloudApiRequest(queue);
+        pbLoaderMain.setVisibility(VISIBLE);
 
-        request.getSongs(new SoundCloudApiRequest.SoundCloudInterface() {
+        request.getSongs(query, new SoundCloudApiRequest.SoundCloudInterface() {
             @Override
             public void onSuccess(List<Song> newSongs) {
+                pbLoaderMain.setVisibility(GONE);
                 currentIndex = 0;
+                songs.clear();
                 songs.addAll(newSongs);
                 adapter.notifyDataSetChanged();
                 adapter.setSelectedPosition(0);
@@ -140,6 +159,9 @@ public class MainActivity extends AppCompatActivity implements
            case CLICK_IV_NEXT:
                pushNext();
                break;
+           case CLICK_BTN_SEARCH:
+               pushSearch();
+               break;
        }
     }
 
@@ -163,12 +185,17 @@ public class MainActivity extends AppCompatActivity implements
         ivPrevious = findViewById(R.id.toolbar_previous);
         pbLoaderToolbar = findViewById(R.id.toolbar_loader);
         sbMusic = findViewById(R.id.toolbar_seekbar);
+        fabSearch = findViewById(R.id.mainActivity_btnSearch);
 
         ivPlay.setTag(CLICK_IV_PLAY);
         ivPrevious.setTag(CLICK_IV_PREVIOUS);
+        ivNext.setTag(CLICK_IV_NEXT);
+        fabSearch.setTag(CLICK_BTN_SEARCH);
 
         ivPlay.setOnClickListener(this);
         ivPrevious.setOnClickListener(this);
+        ivNext.setOnClickListener(this);
+        fabSearch.setOnClickListener(this);
     }
 
     private void togglePlay(final MediaPlayer mediaPlayer) {
@@ -236,44 +263,73 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void pushPlay() {
-        assert mediaPlayer != null;
-
-        if (mediaPlayer.isPlaying()) {
-            ivPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selector_play));
-            mediaPlayer.pause();
-        } else {
-            if (firstLaunch) {
-                playNewSong(0);
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                ivPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selector_play));
+                mediaPlayer.pause();
             } else {
-                mediaPlayer.start();
-                firstLaunch = false;
+                if (firstLaunch) {
+                    playNewSong(0);
+                } else {
+                    mediaPlayer.start();
+                    firstLaunch = false;
+                }
             }
-        }
 
-        ivPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selector_pause));
+            ivPlay.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.selector_pause));
+        }
     }
 
     private void pushPrevious() {
-        firstLaunch = false;
-        assert mediaPlayer != null;
-        int index;
+        if (mediaPlayer != null) {
+            firstLaunch = false;
+            int index;
 
-        if ((index = currentIndex - 1) >= 0) {
-            playNewSong(index);
-        } else {
-            playNewSong(songs.size() - 1);
+            if ((index = currentIndex - 1) >= 0) {
+                playNewSong(index);
+            } else {
+                playNewSong(songs.size() - 1);
+            }
         }
     }
 
     private void pushNext() {
-        firstLaunch = false;
-        assert mediaPlayer != null;
-        int index;
+        if (mediaPlayer != null) {
+            firstLaunch = false;
+            int index;
 
-        if ((index = currentIndex + 1) < songs.size()) {
-            playNewSong(index);
-        } else {
-            playNewSong(0);
+            if ((index = currentIndex + 1) < songs.size()) {
+                playNewSong(index);
+            } else {
+                playNewSong(0);
+            }
         }
+    }
+
+    private void pushSearch() {
+        createDialog();
+    }
+
+    private void createDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final View view = getLayoutInflater().inflate(R.layout.dialog_search, null);
+        builder.setTitle(R.string.rechercher);
+        builder.setView(view);
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EditText etSearch = view.findViewById(R.id.dialogSearch);
+                String search = etSearch.getText().toString().trim();
+
+                if (search.length() > 0) {
+                    getSongs(search);
+                } else {
+                    Toast.makeText(MainActivity.this, "Veuillez remplir le champ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.create().show();
     }
 }
